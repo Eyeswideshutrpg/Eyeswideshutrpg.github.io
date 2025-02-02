@@ -3,8 +3,8 @@
 <head>
     <title>Fiesta de Máscaras</title>
     <script>
-        const passwords = ["fidelio", "caravaggio", "monet", "vangogh", "cabanel"];
-        let assigned = new Set();
+        const passwords = JSON.parse(localStorage.getItem('passwords')) || ["fidelio", "caravaggio", "monet", "vangogh", "cabanel"];
+        let assigned = new Set(JSON.parse(localStorage.getItem('assigned')) || []);
         
         function getIPAddress() {
             return new Promise((resolve) => {
@@ -28,9 +28,20 @@
             const index = Math.floor(Math.random() * passwords.length);
             const password = passwords.splice(index, 1)[0];
             assigned.add(ip);
+            localStorage.setItem('passwords', JSON.stringify(passwords));
+            localStorage.setItem('assigned', JSON.stringify([...assigned]));
+            localStorage.setItem('userPassword', password);
             document.getElementById('password').innerText = `Tu contraseña: ${password}`;
             document.getElementById('get-password').disabled = true;
         }
+
+        window.onload = () => {
+            const savedPassword = localStorage.getItem('userPassword');
+            if (savedPassword) {
+                document.getElementById('password').innerText = `Tu contraseña: ${savedPassword}`;
+                document.getElementById('get-password').disabled = true;
+            }
+        };
     </script>
 </head>
 <body>
